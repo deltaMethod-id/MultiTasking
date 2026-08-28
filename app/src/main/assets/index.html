@@ -1,0 +1,875 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no"><title>Multitasking</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+        background: #000;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        overflow-x: hidden;
+    }
+
+    body {
+        min-height: 100vh;
+        padding-bottom: 100px;
+    }
+
+    button,
+    input {
+        font-family: inherit;
+    }
+
+    button {
+        border: 0;
+        outline: none;
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    .app {
+        width: 100%;
+        min-height: 100vh;
+        background: #000;
+        position: relative;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 18px;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 8px 2px 18px;
+        animation: slideDown .5s ease;
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .brand-logo {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        border-radius: 16px;
+        object-fit: contain;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.08);
+        padding: 8px;
+    }
+
+    .brand-text {
+        min-width: 0;
+    }
+
+    .brand-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -.5px;
+    }
+
+    .brand-subtitle {
+        margin: 4px 0 0;
+        color: rgba(255,255,255,.48);
+        font-size: 13px;
+    }
+
+    .header-button {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        color: #fff;
+        background: rgba(255,255,255,.035);
+        border: 1px solid rgba(255,255,255,.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition:
+            transform .2s ease,
+            background .2s ease,
+            border-color .2s ease;
+    }
+
+    .header-button:active {
+        transform: scale(.88);
+        background: rgba(255,255,255,.09);
+    }
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    .search {
+        position: relative;
+        margin-bottom: 20px;
+        animation: fadeUp .55s ease;
+    }
+
+    .search-box {
+        width: 100%;
+        height: 54px;
+        padding: 0 18px 0 48px;
+        border-radius: 27px;
+        color: #fff;
+        background: rgba(255,255,255,.045);
+        border: 1px solid rgba(255,255,255,.08);
+        outline: none;
+        font-size: 15px;
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .search-box::placeholder {
+        color: rgba(255,255,255,.35);
+    }
+
+    .search-box:focus {
+        background: rgba(255,255,255,.065);
+        border-color: rgba(255,255,255,.18);
+        box-shadow: 0 0 0 4px rgba(255,255,255,.025);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 19px;
+        height: 19px;
+        opacity: .5;
+        pointer-events: none;
+    }
+
+    /* =========================
+       SECTION
+    ========================= */
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 4px 3px 12px;
+    }
+
+    .section-title {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: rgba(255,255,255,.65);
+    }
+
+    .note-count {
+        font-size: 12px;
+        color: rgba(255,255,255,.32);
+    }
+
+    /* =========================
+       NOTES
+    ========================= */
+
+    .notes {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+    }
+
+    .note-card {
+        position: relative;
+        width: 100%;
+        min-height: 100px;
+        padding: 17px;
+        border-radius: 24px;
+        background: rgba(255,255,255,.045);
+        border: 1px solid rgba(255,255,255,.075);
+        overflow: hidden;
+        cursor: pointer;
+
+        opacity: 0;
+        transform: translateY(15px) scale(.98);
+
+        animation: noteAppear .45s ease forwards;
+
+        transition:
+            transform .22s ease,
+            background .22s ease,
+            border-color .22s ease;
+    }
+
+    .note-card::before {
+        content: "";
+        position: absolute;
+        width: 90px;
+        height: 90px;
+        right: -45px;
+        top: -45px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.035);
+        pointer-events: none;
+    }
+
+    .note-card:active {
+        transform: scale(.97);
+        background: rgba(255,255,255,.075);
+        border-color: rgba(255,255,255,.14);
+    }
+
+    .note-title {
+        margin: 0 0 7px;
+        font-size: 16px;
+        font-weight: 650;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .note-preview {
+        margin: 0;
+        color: rgba(255,255,255,.48);
+        font-size: 13px;
+        line-height: 1.5;
+
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .note-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 13px;
+    }
+
+    .note-date {
+        color: rgba(255,255,255,.28);
+        font-size: 11px;
+    }
+
+    .attachment {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: rgba(255,255,255,.32);
+        font-size: 11px;
+    }
+
+    /* =========================
+       EMPTY STATE
+    ========================= */
+
+    .empty {
+        display: none;
+        min-height: 310px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        padding: 30px;
+        animation: fadeUp .4s ease;
+    }
+
+    .empty-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.045);
+        border: 1px solid rgba(255,255,255,.075);
+        margin-bottom: 18px;
+    }
+
+    .empty-title {
+        margin: 0 0 7px;
+        font-size: 17px;
+    }
+
+    .empty-text {
+        max-width: 260px;
+        margin: 0;
+        color: rgba(255,255,255,.38);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    /* =========================
+       FAB
+    ========================= */
+
+    .fab {
+        position: fixed;
+        right: 22px;
+        bottom: 24px;
+
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+
+        color: #fff;
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.13);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        cursor: pointer;
+        z-index: 50;
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+
+        box-shadow:
+            0 10px 30px rgba(0,0,0,.5);
+
+        transition:
+            transform .22s ease,
+            background .22s ease,
+            border-color .22s ease;
+    }
+
+    .fab:active {
+        transform: scale(.86) rotate(8deg);
+        background: rgba(255,255,255,.13);
+    }
+
+    /* =========================
+       RIPPLE
+    ========================= */
+
+    .ripple {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        pointer-events: none;
+        background: rgba(255,255,255,.12);
+        transform: translate(-50%, -50%) scale(0);
+        animation: ripple .5s ease-out forwards;
+        z-index: 9999;
+    }
+
+    /* =========================
+       ANIMATIONS
+    ========================= */
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes noteAppear {
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes ripple {
+        to {
+            transform: translate(-50%, -50%) scale(20);
+            opacity: 0;
+        }
+    }
+
+    /* =========================
+       SMALL DEVICES
+    ========================= */
+
+    @media (max-width: 360px) {
+        .container {
+            padding: 14px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+        }
+
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+        }
+
+        .fab {
+            right: 17px;
+            bottom: 18px;
+        }
+    }
+</style>
+
+</head><body><div class="app"><div class="container">
+
+    <!-- HEADER -->
+    <header class="header">
+
+        <div class="brand">
+
+            <!-- Android drawable/icon -->
+            <img
+                class="brand-logo"
+                src="file:///android_res/drawable/icon"
+                alt="Multitasking">
+
+            <div class="brand-text">
+                <h1 class="brand-title">Multitasking</h1>
+                <p class="brand-subtitle">Your notes, all in one place</p>
+            </div>
+
+        </div>
+
+        <button
+            class="header-button"
+            id="menuButton"
+            aria-label="Menu">
+
+            <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round">
+
+                <circle cx="5" cy="12" r="1"/>
+                <circle cx="12" cy="12" r="1"/>
+                <circle cx="19" cy="12" r="1"/>
+
+            </svg>
+
+        </button>
+
+    </header>
+
+
+    <!-- SEARCH -->
+    <div class="search">
+
+        <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round">
+
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m20 20-4-4"/>
+
+        </svg>
+
+        <input
+            id="searchBox"
+            class="search-box"
+            type="search"
+            placeholder="Search notes..."
+            autocomplete="off"
+            spellcheck="false">
+
+    </div>
+
+
+    <!-- SECTION -->
+    <div class="section-header">
+
+        <h2 class="section-title">Notes</h2>
+
+        <span
+            class="note-count"
+            id="noteCount">
+            0 notes
+        </span>
+
+    </div>
+
+
+    <!-- NOTES -->
+    <main
+        class="notes"
+        id="notesList">
+    </main>
+
+
+    <!-- EMPTY STATE -->
+    <section
+        class="empty"
+        id="emptyState">
+
+        <div class="empty-icon">
+
+            <svg
+                width="30"
+                height="30"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <path d="M14 2v6h6"/>
+                <path d="M8 13h8"/>
+                <path d="M8 17h5"/>
+
+            </svg>
+
+        </div>
+
+        <h2 class="empty-title">No notes yet</h2>
+
+        <p class="empty-text">
+            Create your first note and start organizing your thoughts.
+        </p>
+
+    </section>
+
+</div>
+
+
+<!-- ADD NOTE -->
+<button
+    class="fab"
+    id="addButton"
+    aria-label="Create note">
+
+    <svg
+        width="25"
+        height="25"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round">
+
+        <path d="M12 5v14"/>
+        <path d="M5 12h14"/>
+
+    </svg>
+
+</button>
+
+</div><script>
+    /*
+     * Multitasking
+     * Main Notes Controller
+     */
+
+    const notesList = document.getElementById("notesList");
+    const emptyState = document.getElementById("emptyState");
+    const noteCount = document.getElementById("noteCount");
+    const searchBox = document.getElementById("searchBox");
+    const addButton = document.getElementById("addButton");
+    const menuButton = document.getElementById("menuButton");
+
+
+    /*
+     * Demo data.
+     *
+     * Later this can be replaced with
+     * localStorage / IndexedDB data.
+     */
+
+    let notes = JSON.parse(
+        localStorage.getItem("multitasking_notes") || "[]"
+    );
+
+
+    function saveNotes() {
+        localStorage.setItem(
+            "multitasking_notes",
+            JSON.stringify(notes)
+        );
+    }
+
+
+    function escapeHTML(value) {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    function formatDate(date) {
+
+        const d = new Date(date);
+
+        if (Number.isNaN(d.getTime())) {
+            return "";
+        }
+
+        return d.toLocaleDateString(
+            undefined,
+            {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            }
+        );
+    }
+
+
+    function renderNotes(filter = "") {
+
+        notesList.innerHTML = "";
+
+        const query = filter
+            .trim()
+            .toLowerCase();
+
+        const filtered = notes.filter(note => {
+
+            const title = String(note.title || "");
+            const content = String(note.content || "");
+
+            return (
+                title.toLowerCase().includes(query) ||
+                content.toLowerCase().includes(query)
+            );
+
+        });
+
+
+        noteCount.textContent =
+            filtered.length +
+            (filtered.length === 1 ? " note" : " notes");
+
+
+        if (filtered.length === 0) {
+
+            notesList.style.display = "none";
+            emptyState.style.display = "flex";
+
+            return;
+        }
+
+
+        notesList.style.display = "flex";
+        emptyState.style.display = "none";
+
+
+        filtered.forEach((note, index) => {
+
+            const card = document.createElement("article");
+
+            card.className = "note-card";
+
+            card.style.animationDelay =
+                Math.min(index * 0.045, 0.35) + "s";
+
+
+            const title =
+                note.title?.trim() ||
+                "Untitled note";
+
+            const content =
+                note.content?.trim() ||
+                "No content";
+
+
+            card.innerHTML = `
+                <h3 class="note-title">
+                    ${escapeHTML(title)}
+                </h3>
+
+                <p class="note-preview">
+                    ${escapeHTML(content)}
+                </p>
+
+                <div class="note-footer">
+
+                    <span class="note-date">
+                        ${escapeHTML(
+                            formatDate(note.updatedAt || note.createdAt)
+                        )}
+                    </span>
+
+                    ${
+                        note.attachments?.length
+                        ? `
+                        <span class="attachment">
+                            ${note.attachments.length} attachment${note.attachments.length > 1 ? "s" : ""}
+                        </span>
+                        `
+                        : ""
+                    }
+
+                </div>
+            `;
+
+
+            card.addEventListener("click", () => {
+
+                const id = encodeURIComponent(
+                    note.id
+                );
+
+                location.href =
+                    "note.html?id=" + id;
+
+            });
+
+
+            notesList.appendChild(card);
+
+        });
+
+    }
+
+
+    /*
+     * Create note
+     */
+
+    addButton.addEventListener("click", () => {
+
+        createRipple(event);
+
+        location.href = "edit.html";
+
+    });
+
+
+    /*
+     * Search
+     */
+
+    searchBox.addEventListener("input", () => {
+
+        renderNotes(
+            searchBox.value
+        );
+
+    });
+
+
+    /*
+     * Menu
+     */
+
+    menuButton.addEventListener("click", (event) => {
+
+        createRipple(event);
+
+        /*
+         * Reserved for future menu.
+         */
+
+    });
+
+
+    /*
+     * Touch ripple
+     */
+
+    function createRipple(event) {
+
+        if (!event) {
+            return;
+        }
+
+        const ripple =
+            document.createElement("span");
+
+        ripple.className = "ripple";
+
+        ripple.style.left =
+            event.clientX + "px";
+
+        ripple.style.top =
+            event.clientY + "px";
+
+        document.body.appendChild(ripple);
+
+        setTimeout(() => {
+            ripple.remove();
+        }, 550);
+
+    }
+
+
+    /*
+     * Initial render
+     */
+
+    renderNotes();
+
+
+    /*
+     * Refresh when returning to this page.
+     */
+
+    window.addEventListener(
+        "pageshow",
+        () => {
+            notes =
+                JSON.parse(
+                    localStorage.getItem(
+                        "multitasking_notes"
+                    ) || "[]"
+                );
+
+            renderNotes(searchBox.value);
+        }
+    );
+
+</script></body>
+</html>

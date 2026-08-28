@@ -1,0 +1,1279 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>Edit Note • Multitasking</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+        background: #000;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        overflow-x: hidden;
+        padding-bottom: 30px;
+    }
+
+    button,
+    input,
+    textarea {
+        font-family: inherit;
+    }
+
+    button {
+        border: 0;
+        outline: none;
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    .app {
+        width: 100%;
+        min-height: 100vh;
+        background: #000;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 16px;
+    }
+
+    /* =========================
+       TOP BAR
+    ========================= */
+
+    .topbar {
+        height: 58px;
+
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        animation: slideDown .45s ease;
+    }
+
+    .top-button {
+        width: 44px;
+        height: 44px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: #fff;
+
+        background: rgba(255,255,255,.045);
+        border: 1px solid rgba(255,255,255,.08);
+
+        border-radius: 50%;
+
+        cursor: pointer;
+
+        transition:
+            transform .2s ease,
+            background .2s ease;
+    }
+
+    .top-button:active {
+        transform: scale(.86);
+        background: rgba(255,255,255,.09);
+    }
+
+    .top-title {
+        flex: 1;
+
+        min-width: 0;
+
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .save-button {
+        width: auto;
+        min-width: 70px;
+        padding: 0 17px;
+
+        border-radius: 22px;
+
+        font-size: 13px;
+        font-weight: 600;
+
+        color: rgba(255,255,255,.8);
+
+        background: rgba(255,255,255,.055);
+        border: 1px solid rgba(255,255,255,.09);
+
+        cursor: pointer;
+
+        transition:
+            transform .2s ease,
+            background .2s ease;
+    }
+
+    .save-button:active {
+        transform: scale(.93);
+        background: rgba(255,255,255,.1);
+    }
+
+    /* =========================
+       EDITOR
+    ========================= */
+
+    .editor {
+        margin-top: 12px;
+
+        padding: 21px;
+
+        border-radius: 28px;
+
+        background: rgba(255,255,255,.045);
+        border: 1px solid rgba(255,255,255,.075);
+
+        animation: fadeUp .5s ease;
+    }
+
+    .title-input {
+        width: 100%;
+
+        padding: 3px 0 12px;
+
+        background: transparent;
+        border: 0;
+        outline: none;
+
+        color: #fff;
+
+        font-size: 27px;
+        line-height: 1.25;
+        font-weight: 700;
+
+        letter-spacing: -.6px;
+    }
+
+    .title-input::placeholder {
+        color: rgba(255,255,255,.22);
+    }
+
+    .content-input {
+        width: 100%;
+        min-height: 330px;
+
+        resize: vertical;
+
+        padding: 0;
+
+        background: transparent;
+        border: 0;
+        outline: none;
+
+        color: rgba(255,255,255,.75);
+
+        font-size: 15px;
+        line-height: 1.75;
+    }
+
+    .content-input::placeholder {
+        color: rgba(255,255,255,.25);
+    }
+
+    /* =========================
+       TOOLBAR
+    ========================= */
+
+    .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        margin-top: 17px;
+        padding-top: 14px;
+
+        border-top: 1px solid rgba(255,255,255,.055);
+    }
+
+    .tool-button {
+        width: 43px;
+        height: 43px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        color: rgba(255,255,255,.58);
+
+        background: rgba(255,255,255,.035);
+        border: 1px solid rgba(255,255,255,.065);
+
+        cursor: pointer;
+
+        transition:
+            transform .2s ease,
+            background .2s ease;
+    }
+
+    .tool-button:active {
+        transform: scale(.87);
+        background: rgba(255,255,255,.09);
+    }
+
+    .character-count {
+        margin-left: auto;
+
+        color: rgba(255,255,255,.25);
+
+        font-size: 11px;
+    }
+
+    /* =========================
+       ATTACHMENTS
+    ========================= */
+
+    .attachments {
+        display: none;
+
+        margin-top: 12px;
+
+        padding: 15px;
+
+        border-radius: 21px;
+
+        background: rgba(255,255,255,.035);
+        border: 1px solid rgba(255,255,255,.06);
+
+        animation: fadeUp .3s ease;
+    }
+
+    .attachments-title {
+        margin: 0 0 10px;
+
+        color: rgba(255,255,255,.42);
+
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .attachment-list {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .attachment {
+        min-height: 50px;
+
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        padding: 7px 9px;
+
+        border-radius: 15px;
+
+        background: rgba(255,255,255,.035);
+    }
+
+    .attachment-icon {
+        width: 34px;
+        height: 34px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        background: rgba(255,255,255,.055);
+    }
+
+    .attachment-info {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .attachment-name {
+        margin: 0;
+
+        color: rgba(255,255,255,.7);
+
+        font-size: 12px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .attachment-type {
+        margin: 3px 0 0;
+
+        color: rgba(255,255,255,.25);
+
+        font-size: 10px;
+    }
+
+    .remove-attachment {
+        width: 32px;
+        height: 32px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        border-radius: 50%;
+
+        color: rgba(255,255,255,.42);
+
+        background: transparent;
+
+        cursor: pointer;
+    }
+
+    .remove-attachment:active {
+        background: rgba(255,255,255,.08);
+        transform: scale(.88);
+    }
+
+    /* =========================
+       HIDDEN FILE INPUT
+    ========================= */
+
+    #fileInput {
+        display: none;
+    }
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    .status {
+        min-height: 18px;
+
+        margin-top: 9px;
+        padding-left: 4px;
+
+        color: rgba(255,255,255,.3);
+
+        font-size: 11px;
+
+        opacity: 0;
+
+        transition: opacity .2s ease;
+    }
+
+    .status.show {
+        opacity: 1;
+    }
+
+    /* =========================
+       RIPPLE
+    ========================= */
+
+    .ripple {
+        position: fixed;
+
+        width: 10px;
+        height: 10px;
+
+        border-radius: 50%;
+
+        pointer-events: none;
+
+        background: rgba(255,255,255,.12);
+
+        transform:
+            translate(-50%, -50%)
+            scale(0);
+
+        animation: ripple .5s ease-out forwards;
+
+        z-index: 9999;
+    }
+
+    /* =========================
+       ANIMATIONS
+    ========================= */
+
+    @keyframes slideDown {
+
+        from {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+    @keyframes fadeUp {
+
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+    @keyframes ripple {
+
+        to {
+            opacity: 0;
+
+            transform:
+                translate(-50%, -50%)
+                scale(20);
+        }
+
+    }
+</style>
+
+</head><body><div class="app"><div class="container">
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <button
+            class="top-button"
+            id="backButton"
+            aria-label="Back">
+
+            <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M19 12H5"/>
+                <path d="m12 19-7-7 7-7"/>
+
+            </svg>
+
+        </button>
+
+
+        <div class="top-title">
+            <span id="pageTitle">
+                New Note
+            </span>
+        </div>
+
+
+        <button
+            class="save-button"
+            id="saveButton">
+
+            Save
+
+        </button>
+
+    </header>
+
+
+    <!-- EDITOR -->
+
+    <main class="editor">
+
+        <input
+            id="titleInput"
+            class="title-input"
+            type="text"
+            placeholder="Note title"
+            maxlength="200"
+            autocomplete="off"
+            spellcheck="true">
+
+
+        <textarea
+            id="contentInput"
+            class="content-input"
+            placeholder="Start writing..."
+            spellcheck="true"></textarea>
+
+
+        <!-- TOOLBAR -->
+
+        <div class="toolbar">
+
+            <button
+                class="tool-button"
+                id="attachButton"
+                aria-label="Attach file">
+
+                <svg
+                    width="19"
+                    height="19"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <path d="m21.4 11.6-8.8 8.8a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.6-8.6"/>
+
+                </svg>
+
+            </button>
+
+
+            <span
+                class="character-count"
+                id="characterCount">
+                0 characters
+            </span>
+
+        </div>
+
+    </main>
+
+
+    <!-- FILE INPUT -->
+
+    <input
+        id="fileInput"
+        type="file"
+        multiple
+        accept="image/*,video/*,.pdf,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.7z">
+
+
+    <!-- ATTACHMENTS -->
+
+    <section
+        class="attachments"
+        id="attachmentsSection">
+
+        <h2 class="attachments-title">
+            Attachments
+        </h2>
+
+        <div
+            class="attachment-list"
+            id="attachmentList">
+        </div>
+
+    </section>
+
+
+    <!-- STATUS -->
+
+    <div
+        class="status"
+        id="status">
+    </div>
+
+</div>
+
+</div><script>
+
+    /*
+     * Multitasking
+     * Note Editor
+     */
+
+
+    const titleInput =
+        document.getElementById("titleInput");
+
+    const contentInput =
+        document.getElementById("contentInput");
+
+    const saveButton =
+        document.getElementById("saveButton");
+
+    const backButton =
+        document.getElementById("backButton");
+
+    const attachButton =
+        document.getElementById("attachButton");
+
+    const fileInput =
+        document.getElementById("fileInput");
+
+    const attachmentList =
+        document.getElementById("attachmentList");
+
+    const attachmentsSection =
+        document.getElementById("attachmentsSection");
+
+    const characterCount =
+        document.getElementById("characterCount");
+
+    const pageTitle =
+        document.getElementById("pageTitle");
+
+    const status =
+        document.getElementById("status");
+
+
+    /*
+     * Current note ID.
+     */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const noteId =
+        params.get("id");
+
+
+    /*
+     * Attachments currently selected.
+     */
+
+    let attachments = [];
+
+
+    /*
+     * Read notes.
+     */
+
+    function getNotes() {
+
+        try {
+
+            return JSON.parse(
+                localStorage.getItem(
+                    "multitasking_notes"
+                ) || "[]"
+            );
+
+        } catch {
+
+            return [];
+
+        }
+
+    }
+
+
+    /*
+     * Save notes.
+     */
+
+    function setNotes(notes) {
+
+        localStorage.setItem(
+            "multitasking_notes",
+            JSON.stringify(notes)
+        );
+
+    }
+
+
+    /*
+     * Generate ID.
+     */
+
+    function generateId() {
+
+        return (
+            Date.now().toString(36) +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2, 10)
+        );
+
+    }
+
+
+    /*
+     * Format status.
+     */
+
+    function showStatus(message) {
+
+        status.textContent =
+            message;
+
+        status.classList.add(
+            "show"
+        );
+
+        clearTimeout(
+            showStatus.timer
+        );
+
+        showStatus.timer =
+            setTimeout(() => {
+
+                status.classList.remove(
+                    "show"
+                );
+
+            }, 1800);
+
+    }
+
+
+    /*
+     * Load existing note.
+     */
+
+    function loadNote() {
+
+        if (!noteId) {
+
+            pageTitle.textContent =
+                "New Note";
+
+            return;
+
+        }
+
+
+        const notes =
+            getNotes();
+
+        const note =
+            notes.find(
+                item =>
+                    String(item.id) ===
+                    String(noteId)
+            );
+
+
+        if (!note) {
+
+            pageTitle.textContent =
+                "New Note";
+
+            return;
+
+        }
+
+
+        pageTitle.textContent =
+            "Edit Note";
+
+
+        titleInput.value =
+            note.title || "";
+
+
+        contentInput.value =
+            note.content || "";
+
+
+        attachments =
+            Array.isArray(note.attachments)
+                ? [...note.attachments]
+                : [];
+
+
+        renderAttachments();
+
+        updateCharacterCount();
+
+    }
+
+
+    /*
+     * Character count.
+     */
+
+    function updateCharacterCount() {
+
+        const length =
+            contentInput.value.length;
+
+        characterCount.textContent =
+            length +
+            (length === 1
+                ? " character"
+                : " characters");
+
+    }
+
+
+    /*
+     * Render attachments.
+     */
+
+    function renderAttachments() {
+
+        attachmentList.innerHTML = "";
+
+
+        if (!attachments.length) {
+
+            attachmentsSection.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        attachmentsSection.style.display =
+            "block";
+
+
+        attachments.forEach(
+            (file, index) => {
+
+                const item =
+                    document.createElement("div");
+
+                item.className =
+                    "attachment";
+
+
+                item.innerHTML = `
+
+                    <div class="attachment-icon">
+
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <path d="M14 2v6h6"/>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div class="attachment-info">
+
+                        <p class="attachment-name">
+                            ${escapeHTML(file.name || "Attachment")}
+                        </p>
+
+                        <p class="attachment-type">
+                            ${escapeHTML(file.type || "File")}
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="remove-attachment"
+                        data-index="${index}"
+                        aria-label="Remove attachment">
+
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round">
+
+                            <path d="M6 6l12 12"/>
+                            <path d="M18 6 6 18"/>
+
+                        </svg>
+
+                    </button>
+
+                `;
+
+
+                item
+                    .querySelector(
+                        ".remove-attachment"
+                    )
+                    .addEventListener(
+                        "click",
+                        event => {
+
+                            ripple(event);
+
+                            const removeIndex =
+                                Number(
+                                    event.currentTarget
+                                        .dataset.index
+                                );
+
+                            attachments.splice(
+                                removeIndex,
+                                1
+                            );
+
+                            renderAttachments();
+
+                        }
+                    );
+
+
+                attachmentList.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+     * Escape HTML.
+     */
+
+    function escapeHTML(value) {
+
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /*
+     * Select files.
+     *
+     * Android WebView handles this through
+     * MainActivity.onShowFileChooser().
+     */
+
+    attachButton.addEventListener(
+        "click",
+        event => {
+
+            ripple(event);
+
+            fileInput.click();
+
+        }
+    );
+
+
+    fileInput.addEventListener(
+        "change",
+        () => {
+
+            const selected =
+                Array.from(
+                    fileInput.files || []
+                );
+
+
+            selected.forEach(file => {
+
+                attachments.push({
+
+                    name:
+                        file.name,
+
+                    type:
+                        file.type ||
+                        "File",
+
+                    size:
+                        file.size,
+
+                    /*
+                     * The actual Android URI is
+                     * handled by the native picker.
+                     */
+
+                });
+
+            });
+
+
+            renderAttachments();
+
+            fileInput.value = "";
+
+        }
+    );
+
+
+    /*
+     * Save note.
+     */
+
+    function saveNote() {
+
+        const title =
+            titleInput.value.trim();
+
+        const content =
+            contentInput.value;
+
+
+        if (!title && !content.trim()) {
+
+            showStatus(
+                "Write something first"
+            );
+
+            return;
+
+        }
+
+
+        const notes =
+            getNotes();
+
+        const now =
+            Date.now();
+
+
+        if (noteId) {
+
+            const index =
+                notes.findIndex(
+                    item =>
+                        String(item.id) ===
+                        String(noteId)
+                );
+
+
+            if (index !== -1) {
+
+                notes[index].title =
+                    title;
+
+                notes[index].content =
+                    content;
+
+                notes[index].attachments =
+                    attachments;
+
+                notes[index].updatedAt =
+                    now;
+
+            }
+
+        } else {
+
+            notes.unshift({
+
+                id:
+                    generateId(),
+
+                title:
+                    title,
+
+                content:
+                    content,
+
+                attachments:
+                    attachments,
+
+                createdAt:
+                    now,
+
+                updatedAt:
+                    now
+
+            });
+
+        }
+
+
+        setNotes(notes);
+
+
+        /*
+         * Return to note viewer for existing note,
+         * otherwise return to index.
+         */
+
+        if (noteId) {
+
+            location.href =
+                "note.html?id=" +
+                encodeURIComponent(
+                    noteId
+                );
+
+        } else {
+
+            location.href =
+                "index.html";
+
+        }
+
+    }
+
+
+    /*
+     * Save button.
+     */
+
+    saveButton.addEventListener(
+        "click",
+        event => {
+
+            ripple(event);
+            saveNote();
+
+        }
+    );
+
+
+    /*
+     * Back button.
+     */
+
+    backButton.addEventListener(
+        "click",
+        event => {
+
+            ripple(event);
+
+            if (noteId) {
+
+                location.href =
+                    "note.html?id=" +
+                    encodeURIComponent(
+                        noteId
+                    );
+
+            } else {
+
+                location.href =
+                    "index.html";
+
+            }
+
+        }
+    );
+
+
+    /*
+     * Character counter.
+     */
+
+    contentInput.addEventListener(
+        "input",
+        updateCharacterCount
+    );
+
+
+    /*
+     * Auto-save draft while typing.
+     */
+
+    titleInput.addEventListener(
+        "input",
+        () => {
+
+            localStorage.setItem(
+                "multitasking_draft_title",
+                titleInput.value
+            );
+
+        }
+    );
+
+
+    contentInput.addEventListener(
+        "input",
+        () => {
+
+            localStorage.setItem(
+                "multitasking_draft_content",
+                contentInput.value
+            );
+
+        }
+    );
+
+
+    /*
+     * Ripple effect.
+     */
+
+    function ripple(event) {
+
+        if (!event) {
+            return;
+        }
+
+
+        const element =
+            document.createElement("span");
+
+        element.className =
+            "ripple";
+
+
+        element.style.left =
+            event.clientX + "px";
+
+        element.style.top =
+            event.clientY + "px";
+
+
+        document.body.appendChild(
+            element
+        );
+
+
+        setTimeout(() => {
+
+            element.remove();
+
+        }, 550);
+
+    }
+
+
+    /*
+     * Initial setup.
+     */
+
+    loadNote();
+
+    updateCharacterCount();
+
+</script></body>
+</html>

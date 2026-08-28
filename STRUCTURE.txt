@@ -1,0 +1,32 @@
+Multitasking/
+├── app/
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/
+│   │       │       └── vindevs/
+│   │       │           └── multitasking/
+│   │       │               └── MainActivity.java
+│   │       │
+│   │       ├── assets/
+│   │       │   ├── index.html
+│   │       │   ├── note.html
+│   │       │   └── edit.html
+│   │       │
+│   │       ├── res/
+│   │       │   ├── drawable/
+│   │       │   │   └── icon.xml
+│   │       │   ├── layout/
+│   │       │   │   └── activity_main.xml
+│   │       │   └── values/
+│   │       │       ├── colors.xml
+│   │       │       ├── strings.xml
+│   │       │       └── styles.xml
+│   │       │
+│   │       └── AndroidManifest.xml
+│   │
+│   └── build.gradle
+│
+├── build.gradle
+├── settings.gradle
+└── gradle.properties
